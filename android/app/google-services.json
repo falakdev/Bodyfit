@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "777727641177",
+    "project_id": "bodyfit1",
+    "storage_bucket": "bodyfit1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:777727641177:android:b2f1d3ee0a5a721f9e1348",
+        "android_client_info": {
+          "package_name": "com.example.bodyfit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-Ps-DZRlmehmZt3o99JbPpjVtMP6inGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -136,7 +136,7 @@ class HomeScreen extends StatelessWidget {
       children: [
         Text(value, style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
-        Text(label, style: const TextStyle(color: Colors.white54, fontSize: 12)),
+        Text(label, style: TextStyle(color: Colors.white54, fontSize: 12)),
       ],
     );
   }
@@ -160,7 +160,7 @@ class HomeScreen extends StatelessWidget {
         children: [
           Icon(icon, color: color, size: 28),
           const SizedBox(height: 12),
-          Text(title, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+          Text(title, style: TextStyle(color: Colors.white70, fontSize: 12)),
           const SizedBox(height: 6),
           Text('$value $unit', style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold)),
         ],
@@ -197,7 +197,7 @@ class HomeScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white70)),
+          Text(label, style: TextStyle(color: Colors.white70)),
           Text(value, style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
         ],
       ),

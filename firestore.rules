@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // TEMPORARY: Allow all reads/writes for testing purposes
+    // This helps diagnose if the issue is rules vs. other config problems
+    // TODO: Replace with secure per-user rules after confirming writes work
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+

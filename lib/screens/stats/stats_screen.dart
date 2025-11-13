@@ -34,6 +34,14 @@ class StatsScreen extends StatelessWidget {
                       value: stepProvider.steps.toString(),
                       icon: Icons.directions_walk,
                       color: AppColors.primary,
+                      onTap: () {
+                        // Show detailed steps info
+                        _showDetailsDialog(context, 'Steps Details', 
+                          'Today: ${stepProvider.steps} steps\n'
+                          'Goal: ${stepProvider.dailyGoal} steps\n'
+                          'Progress: ${(stepProvider.progress * 100).toStringAsFixed(1)}%\n'
+                          'Average Weekly: ${stepProvider.averageWeeklySteps.toStringAsFixed(0)} steps');
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -43,6 +51,13 @@ class StatsScreen extends StatelessWidget {
                       value: stepProvider.calories.toStringAsFixed(0),
                       icon: Icons.local_fire_department,
                       color: const Color(0xFFFF6B6B),
+                      onTap: () {
+                        // Show detailed calories info
+                        _showDetailsDialog(context, 'Calories Details',
+                          'Today: ${stepProvider.calories.toStringAsFixed(0)} kcal\n'
+                          'Total Weekly: ${stepProvider.totalWeeklyCalories.toStringAsFixed(0)} kcal\n'
+                          'Based on ${stepProvider.steps} steps');
+                      },
                     ),
                   ),
                 ],
@@ -100,22 +115,50 @@ class StatsScreen extends StatelessWidget {
     required String value,
     required IconData icon,
     required Color color,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1A1A1A),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(icon, color: color, size: 28),
+                if (onTap != null)
+                  Icon(Icons.info_outline, color: color.withOpacity(0.7), size: 18),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(title, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+            const SizedBox(height: 6),
+            Text(value, style: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.bold)),
+          ],
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 12),
-          Text(title, style: const TextStyle(color: Colors.white70, fontSize: 12)),
-          const SizedBox(height: 6),
-          Text(value, style: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.bold)),
+    );
+  }
+  
+  void _showDetailsDialog(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        title: Text(title, style: AppTextStyles.subheading),
+        content: Text(content, style: const TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Close', style: TextStyle(color: AppColors.primary)),
+          ),
         ],
       ),
     );

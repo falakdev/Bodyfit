@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'logic/step_provider.dart';
 import 'logic/auth_provider.dart';
 import 'logic/theme_provider.dart';
@@ -12,6 +14,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase with options
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    debugPrint('Firebase initialized successfully');
+  } catch (e) {
+    debugPrint('Firebase initialization error: $e');
+    // App will continue to work but Firebase features won't be available
+  }
+  
   final prefs = await SharedPreferences.getInstance();
   final seenOnboarding = prefs.getBool("onboarding_done") ?? false;
 
