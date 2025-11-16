@@ -21,42 +21,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseService _firebaseService = FirebaseService();
   String? userEmail;
   bool _isLoading = false;
+  bool _isInitialized = false;
+  bool _isLoadingProfile = false;
 
   @override
   void initState() {
     super.initState();
-    final stepProvider = Provider.of<StepProvider>(context, listen: false);
-    newGoal = stepProvider.dailyGoal;
-    _loadUserEmail();
-    _loadUserProfile();
+    // Initialize goal with a default value, will be updated after loading
+    newGoal = 6000;
+    // Use post-frame callback to ensure context is available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final stepProvider = Provider.of<StepProvider>(context, listen: false);
+        // Clamp the goal to valid Slider range
+        newGoal = stepProvider.dailyGoal.clamp(1000, 50000);
+        _initializeProfile();
+      }
+    });
   }
   
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Reload profile when screen becomes visible again
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadUserEmail();
-      _loadUserProfile();
-    });
+  Future<void> _initializeProfile() async {
+    if (_isInitialized) return;
+    
+    _isInitialized = true;
+    _loadUserEmail();
+    await _loadUserProfile();
   }
   
   Future<void> _loadUserEmail() async {
     final email = _firebaseService.getUserEmail();
-    setState(() {
-      userEmail = email;
-    });
+    if (mounted) {
+      setState(() {
+        userEmail = email;
+      });
+    }
   }
   
   Future<void> _loadUserProfile() async {
-    setState(() => _isLoading = true);
+    // Prevent multiple simultaneous loads
+    if (_isLoadingProfile) return;
+    
+    _isLoadingProfile = true;
+    if (mounted) {
+      setState(() => _isLoading = true);
+    }
+    
     try {
       final stepProvider = Provider.of<StepProvider>(context, listen: false);
       await stepProvider.loadProfileFromFirebase();
+      
+      // Update goal from provider after loading, clamp to valid range
+      if (mounted) {
+        setState(() {
+          newGoal = stepProvider.dailyGoal.clamp(1000, 50000);
+        });
+      }
     } catch (e) {
       debugPrint('Error loading profile: $e');
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _isLoadingProfile = false;
+        });
+      } else {
+        _isLoadingProfile = false;
+      }
     }
   }
 
@@ -76,6 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
+              _isLoadingProfile = false; // Reset flag to allow refresh
               _loadUserEmail();
               _loadUserProfile();
             },
@@ -109,6 +140,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                       // Reload profile after returning from edit
                       if (mounted) {
+                        _isLoadingProfile = false; // Reset flag to allow reload
+                        _loadUserEmail();
                         _loadUserProfile();
                       }
                     },
@@ -135,6 +168,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                       // Reload profile after returning from edit
                       if (mounted) {
+                        _isLoadingProfile = false; // Reset flag to allow reload
+                        _loadUserEmail();
                         _loadUserProfile();
                       }
                     },
@@ -157,10 +192,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Text('Daily Step Goal: $newGoal steps', style: AppTextStyles.subheading),
               const SizedBox(height: 12),
               Slider(
-                value: newGoal.toDouble(),
+                value: newGoal.clamp(1000, 50000).toDouble(),
                 min: 1000,
-                max: 20000,
-                divisions: 19,
+                max: 50000,
+                divisions: 49,
                 activeColor: AppColors.primary,
                 inactiveColor: AppColors.border,
                 onChanged: (value) {
@@ -172,7 +207,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('1,000', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                  Text('20,000', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                  Text('50,000', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                 ],
               ),
               const SizedBox(height: 20),
