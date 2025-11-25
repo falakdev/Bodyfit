@@ -191,7 +191,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                     children: [
                       Text(exercise.name, style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
-                      Text(exercise.description, style: const TextStyle(color: Colors.white54, fontSize: 12)),
+                      Text(exercise.description, style: TextStyle(color: Colors.white54, fontSize: 12)),
                     ],
                   ),
                 ),
@@ -227,7 +227,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white54, fontSize: 10)),
+        Text(label, style: TextStyle(color: Colors.white54, fontSize: 10)),
         Text(value, style: TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold)),
       ],
     );

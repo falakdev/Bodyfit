@@ -45,7 +45,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
               // Description
               Text('About', style: AppTextStyles.subheading),
               const SizedBox(height: 8),
-              Text(exercise.description, style: const TextStyle(color: Colors.white70, height: 1.6)),
+              Text(exercise.description, style: TextStyle(color: Colors.white70, height: 1.6)),
               const SizedBox(height: 20),
 
               // Target Muscles
@@ -79,7 +79,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                 ),
                 child: Text(
                   exercise.instructions,
-                  style: const TextStyle(color: Colors.white70, height: 1.8),
+                  style: TextStyle(color: Colors.white70, height: 1.8),
                 ),
               ),
               const SizedBox(height: 24),
@@ -151,7 +151,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white70)),
+          Text(label, style: TextStyle(color: Colors.white70)),
           Text(value, style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 16)),
         ],
       ),

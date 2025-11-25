@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+<!-- Optional hardware features: declare step sensors (not required so app remains installable on devices without them) -->
+<uses-feature android:name="android.hardware.sensor.stepcounter" android:required="false" />
+<uses-feature android:name="android.hardware.sensor.stepdetector" android:required="false" />
  
     <application
         android:label="bodyfit"

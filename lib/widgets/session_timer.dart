@@ -85,7 +85,7 @@ class _SessionTimerState extends State<SessionTimer> {
               children: [
                 Text(_format(remainingSeconds), style: TextStyle(color: AppColors.textPrimary, fontSize: 20)),
                 const SizedBox(height: 6),
-                Text('${widget.minutes} min', style: const TextStyle(color: Colors.white54)),
+                Text('${widget.minutes} min', style: TextStyle(color: Colors.white54)),
               ],
             ),
           ],
