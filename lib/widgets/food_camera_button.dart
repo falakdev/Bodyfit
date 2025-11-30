@@ -17,13 +17,26 @@ class _FoodCameraButtonState extends State<FoodCameraButton> {
   bool _isAnalyzing = false;
 
   Future<void> _pickImage(ImageSource source) async {
+    // Some platforms (like Windows desktop) don't support opening the
+    // device camera via image_picker. If the user requested camera on
+    // Windows, fall back to the gallery/file picker to avoid runtime
+    // exceptions.
+    ImageSource pickSource = source;
     try {
+      if (Platform.isWindows && source == ImageSource.camera) {
+        // Inform the user and switch to gallery mode
+        _showError(
+            'Camera not available on Windows — opening file picker instead.');
+        pickSource = ImageSource.gallery;
+      }
+
       final XFile? file = await _picker.pickImage(
-        source: source,
-        imageQuality: 50, // Reduced from 80 to compress images
-        maxHeight: 1024, // Limit max dimensions
+        source: pickSource,
+        imageQuality: 50, // Reduced to compress images
+        maxHeight: 1024,
         maxWidth: 1024,
       );
+
       if (file == null) {
         _showError('No image selected');
         return;
@@ -47,7 +60,11 @@ class _FoodCameraButtonState extends State<FoodCameraButton> {
 
       // Show result dialog with Cancel / Add
       _showResultDialog(imageFile, analysis);
-    } catch (e) {
+    } catch (e, st) {
+      // Log stack trace for diagnosis and show user-friendly message
+      // (printed to console so developer can inspect flutter run output)
+      // ignore: avoid_print
+      print('Error picking image: $e\n$st');
       setState(() => _isAnalyzing = false);
       _showError('Error picking image: $e');
     }
