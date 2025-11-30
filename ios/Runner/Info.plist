@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera is required to take photos of food for calorie scanning</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photo library access is required to select food photos for calorie scanning</string>
 </dict>
 </plist>

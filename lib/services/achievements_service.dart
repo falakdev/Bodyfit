@@ -91,6 +91,5 @@ class AchievementsService {
   }
 
   List<Achievement> getAchievements() => achievements;
-  int getUnlockedCount() =>
-      achievements.where((a) => a.isUnlocked).length;
+  int getUnlockedCount() => achievements.where((a) => a.isUnlocked).length;
 }

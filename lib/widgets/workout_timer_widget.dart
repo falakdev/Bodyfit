@@ -84,7 +84,8 @@ class _WorkoutTimerWidgetState extends State<WorkoutTimerWidget> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
                             isSelected ? Colors.orange : Colors.grey[300],
-                        foregroundColor: isSelected ? Colors.white : Colors.black,
+                        foregroundColor:
+                            isSelected ? Colors.white : Colors.black,
                       ),
                       onPressed: !timerService.isRunning
                           ? () {

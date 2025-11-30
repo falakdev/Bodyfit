@@ -90,9 +90,13 @@ class _CalorieCounterWidgetState extends State<CalorieCounterWidget> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildMacro('Protein', '${calorieService.getTotalProtein()}g',
+                        _buildMacro(
+                            'Protein',
+                            '${calorieService.getTotalProtein()}g',
                             Colors.blue),
-                        _buildMacro('Carbs', '${calorieService.getTotalCarbs()}g',
+                        _buildMacro(
+                            'Carbs',
+                            '${calorieService.getTotalCarbs()}g',
                             Colors.orange),
                         _buildMacro('Fats', '${calorieService.getTotalFats()}g',
                             Colors.green),

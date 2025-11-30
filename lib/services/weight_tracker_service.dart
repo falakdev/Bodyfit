@@ -8,7 +8,8 @@ class WeightEntry {
 }
 
 class WeightTrackerService {
-  static final WeightTrackerService _instance = WeightTrackerService._internal();
+  static final WeightTrackerService _instance =
+      WeightTrackerService._internal();
 
   factory WeightTrackerService() {
     return _instance;
@@ -37,8 +38,7 @@ class WeightTrackerService {
   }
 
   List<WeightEntry> getEntries() => _entries;
-  double? getLastWeight() =>
-      _entries.isNotEmpty ? _entries.last.weight : null;
+  double? getLastWeight() => _entries.isNotEmpty ? _entries.last.weight : null;
   double getTargetWeight() => _targetWeight;
   double getWeightDifference() =>
       _entries.isNotEmpty ? _entries.first.weight - _entries.last.weight : 0;

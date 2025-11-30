@@ -41,7 +41,8 @@ class HomeScreen extends StatelessWidget {
                 // Calories & Stats Row
                 Row(
                   children: [
-                    Expanded(child: _buildStatCard(
+                    Expanded(
+                        child: _buildStatCard(
                       title: 'Calories',
                       value: stepProvider.calories.toStringAsFixed(0),
                       unit: 'kcal',
@@ -49,7 +50,8 @@ class HomeScreen extends StatelessWidget {
                       color: Color(0xFFFF6B6B),
                     )),
                     const SizedBox(width: 12),
-                    Expanded(child: _buildStatCard(
+                    Expanded(
+                        child: _buildStatCard(
                       title: 'Avg Steps',
                       value: stepProvider.averageWeeklySteps.toStringAsFixed(0),
                       unit: 'steps',
@@ -99,7 +101,10 @@ class HomeScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.primary.withOpacity(0.2), AppColors.accent.withOpacity(0.2)],
+          colors: [
+            AppColors.primary.withOpacity(0.2),
+            AppColors.accent.withOpacity(0.2)
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -144,9 +149,12 @@ class HomeScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildStatMini('Distance', '${(provider.steps * 0.00075).toStringAsFixed(2)} km'),
-              _buildStatMini('Duration', '${(provider.steps / 60).toStringAsFixed(0)} min'),
-              _buildStatMini('Goal', '${((provider.progress) * 100).toStringAsFixed(0)}%'),
+              _buildStatMini('Distance',
+                  '${(provider.steps * 0.00075).toStringAsFixed(2)} km'),
+              _buildStatMini('Duration',
+                  '${(provider.steps / 60).toStringAsFixed(0)} min'),
+              _buildStatMini(
+                  'Goal', '${((provider.progress) * 100).toStringAsFixed(0)}%'),
             ],
           ),
         ],
@@ -157,7 +165,11 @@ class HomeScreen extends StatelessWidget {
   Widget _buildStatMini(String label, String value) {
     return Column(
       children: [
-        Text(value, style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(value,
+            style: TextStyle(
+                color: AppColors.primary,
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
         Text(label, style: TextStyle(color: Colors.white54, fontSize: 12)),
       ],
@@ -185,7 +197,9 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Text(title, style: TextStyle(color: Colors.white70, fontSize: 12)),
           const SizedBox(height: 6),
-          Text('$value $unit', style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold)),
+          Text('$value $unit',
+              style: TextStyle(
+                  color: color, fontSize: 18, fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -221,7 +235,9 @@ class HomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: TextStyle(color: Colors.white70)),
-          Text(value, style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+          Text(value,
+              style: TextStyle(
+                  color: AppColors.primary, fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -259,13 +275,18 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.primary.withOpacity(0.3), AppColors.accent.withOpacity(0.3)],
+            colors: [
+              AppColors.primary.withOpacity(0.3),
+              AppColors.accent.withOpacity(0.3)
+            ],
           ),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.primary.withOpacity(0.5)),
         ),
         child: Center(
-          child: Text(label, style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600)),
+          child: Text(label,
+              style: TextStyle(
+                  color: AppColors.primary, fontWeight: FontWeight.w600)),
         ),
       ),
     );

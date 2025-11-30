@@ -24,14 +24,15 @@ class SleepTrackerService {
   List<SleepEntry> _entries = [];
 
   Future<void> addSleep(double hours, int quality) async {
-    _entries.add(SleepEntry(date: DateTime.now(), hours: hours, quality: quality));
+    _entries
+        .add(SleepEntry(date: DateTime.now(), hours: hours, quality: quality));
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('last_sleep_hours', hours);
     await prefs.setInt('last_sleep_quality', quality);
   }
 
   List<SleepEntry> getEntries() => _entries;
-  
+
   double getAverageSleep() {
     if (_entries.isEmpty) return 0;
     final total = _entries.fold<double>(0, (sum, e) => sum + e.hours);

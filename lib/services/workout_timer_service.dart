@@ -1,8 +1,7 @@
 import 'dart:async';
 
 class WorkoutTimerService {
-  static final WorkoutTimerService _instance =
-      WorkoutTimerService._internal();
+  static final WorkoutTimerService _instance = WorkoutTimerService._internal();
 
   factory WorkoutTimerService() {
     return _instance;

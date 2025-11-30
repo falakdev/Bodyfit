@@ -134,16 +134,16 @@ class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
                           : Colors.grey.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: achievement.isUnlocked
-                            ? Colors.blue
-                            : Colors.grey,
+                        color:
+                            achievement.isUnlocked ? Colors.blue : Colors.grey,
                       ),
                     ),
                     padding: const EdgeInsets.all(12),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(achievement.icon, style: const TextStyle(fontSize: 32)),
+                        Text(achievement.icon,
+                            style: const TextStyle(fontSize: 32)),
                         const SizedBox(height: 8),
                         Text(
                           achievement.title,
@@ -285,7 +285,8 @@ class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
                     const SizedBox(height: 8),
                     Text(
                       category,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

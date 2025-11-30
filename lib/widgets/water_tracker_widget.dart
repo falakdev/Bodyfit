@@ -26,7 +26,7 @@ class _WaterTrackerWidgetState extends State<WaterTrackerWidget> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-        
+
         return Card(
           elevation: 4,
           margin: const EdgeInsets.all(16),

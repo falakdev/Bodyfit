@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Food {
@@ -91,6 +92,7 @@ class CalorieCounterService {
 
   Future<void> initialize() async {
     await _checkNewDay();
+    await _loadSavedFoods();
   }
 
   Future<void> _checkNewDay() async {
@@ -107,11 +109,73 @@ class CalorieCounterService {
 
   void addFood(Food food) {
     _foodsToday.add(food);
+    _saveFoods();
   }
 
   void removeFood(int index) {
     if (index >= 0 && index < _foodsToday.length) {
       _foodsToday.removeAt(index);
+      _saveFoods();
+    }
+  }
+
+  // Add a scanned food entry from a map of values (name, calories, protein, carbs, fats)
+  void addScannedFood(Map<String, dynamic> data) {
+    try {
+      final food = Food(
+        name: data['name']?.toString() ?? 'Scanned Food',
+        calories: (data['calories'] is int)
+            ? data['calories']
+            : int.tryParse(data['calories']?.toString() ?? '') ?? 0,
+        protein: (data['protein'] is int)
+            ? data['protein']
+            : int.tryParse(data['protein']?.toString() ?? '') ?? 0,
+        carbs: (data['carbs'] is int)
+            ? data['carbs']
+            : int.tryParse(data['carbs']?.toString() ?? '') ?? 0,
+        fats: (data['fats'] is int)
+            ? data['fats']
+            : int.tryParse(data['fats']?.toString() ?? '') ?? 0,
+      );
+
+      addFood(food);
+    } catch (_) {
+      // ignore parsing errors for now
+    }
+  }
+
+  Future<void> _saveFoods() async {
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = jsonEncode(_foodsToday
+        .map((f) => {
+              'name': f.name,
+              'calories': f.calories,
+              'protein': f.protein,
+              'carbs': f.carbs,
+              'fats': f.fats,
+            })
+        .toList());
+    await prefs.setString('foods_today', encoded);
+  }
+
+  Future<void> _loadSavedFoods() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString('foods_today') ?? '';
+    if (raw.isEmpty) return;
+    try {
+      final List<dynamic> list = jsonDecode(raw);
+      _foodsToday = list
+          .map((e) => Food(
+                name: e['name'] ?? 'Food',
+                calories: e['calories'] ?? 0,
+                protein: e['protein'] ?? 0,
+                carbs: e['carbs'] ?? 0,
+                fats: e['fats'] ?? 0,
+              ))
+          .toList();
+    } catch (_) {
+      // ignore and keep empty
+      _foodsToday = [];
     }
   }
 

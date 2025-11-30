@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import '../widgets/fitness_chatbot.dart';
 import '../config/api_config.dart';
+import '../widgets/food_camera_button.dart';
 import 'home/home_screen.dart';
 import 'stats/stats_screen.dart';
 import 'profile/profile_screen.dart';
@@ -73,6 +74,7 @@ class _MainNavigationState extends State<MainNavigation> {
         FitnessChatbot(
           geminiApiKey: ApiConfig.geminiApiKey,
         ),
+        const FoodCameraButton(),
       ],
     );
   }
