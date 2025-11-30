@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
+import '../widgets/fitness_chatbot.dart';
 import 'home/home_screen.dart';
 import 'stats/stats_screen.dart';
 import 'profile/profile_screen.dart';
@@ -24,44 +25,54 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: _screens[_selectedIndex],
-
-      bottomNavigationBar: Container(
-        height: 68,
-        decoration: BoxDecoration(
-          color: const Color(0xFF111111),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(18),
-            topRight: Radius.circular(18),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withOpacity(0.3),
-              blurRadius: 12,
-              spreadRadius: 1,
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: AppColors.background,
+          body: _screens[_selectedIndex],
+          bottomNavigationBar: Container(
+            height: 68,
+            decoration: BoxDecoration(
+              color: const Color(0xFF111111),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(18),
+                topRight: Radius.circular(18),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withOpacity(0.3),
+                  blurRadius: 12,
+                  spreadRadius: 1,
+                ),
+              ],
             ),
-          ],
+            child: BottomNavigationBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              currentIndex: _selectedIndex,
+              selectedItemColor: AppColors.primary,
+              unselectedItemColor: Colors.white38,
+              type: BottomNavigationBarType.fixed,
+              onTap: (index) {
+                setState(() => _selectedIndex = index);
+              },
+              items: const [
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.directions_walk), label: "Home"),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.fitness_center), label: "Workouts"),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.auto_graph), label: "Stats"),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.person), label: "Profile"),
+              ],
+            ),
+          ),
         ),
-        child: BottomNavigationBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          currentIndex: _selectedIndex,
-          selectedItemColor: AppColors.primary,
-          unselectedItemColor: Colors.white38,
-          type: BottomNavigationBarType.fixed,
-          onTap: (index){
-            setState(() => _selectedIndex = index);
-          },
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.directions_walk), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: "Workouts"),
-            BottomNavigationBarItem(icon: Icon(Icons.auto_graph), label: "Stats"),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-          ],
+        FitnessChatbot(
+          geminiApiKey: 'AIzaSyAXsYBc0wIEWdvjQrEcGZxq4e8dFHxJbys',
         ),
-      ),
+      ],
     );
   }
 }
