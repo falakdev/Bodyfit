@@ -155,18 +155,20 @@ class _FoodCameraButtonState extends State<FoodCameraButton> {
             ElevatedButton(
               onPressed: () {
                 try {
+                  final foodName = nameCtl.text.trim();
+
+                  if (foodName.isEmpty) {
+                    _showError('Please enter a food name');
+                    return;
+                  }
+
                   final data = {
-                    'name': nameCtl.text.trim(),
+                    'name': foodName,
                     'calories': int.tryParse(caloriesCtl.text) ?? 0,
                     'protein': int.tryParse(proteinCtl.text) ?? 0,
                     'carbs': int.tryParse(carbsCtl.text) ?? 0,
                     'fats': int.tryParse(fatsCtl.text) ?? 0,
                   };
-
-                  if (data['name'].isEmpty) {
-                    _showError('Please enter a food name');
-                    return;
-                  }
 
                   CalorieCounterService().addScannedFood(data);
 
