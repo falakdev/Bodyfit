@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import '../widgets/fitness_chatbot.dart';
+import '../config/api_config.dart';
 import 'home/home_screen.dart';
 import 'stats/stats_screen.dart';
 import 'profile/profile_screen.dart';
@@ -70,7 +71,7 @@ class _MainNavigationState extends State<MainNavigation> {
           ),
         ),
         FitnessChatbot(
-          geminiApiKey: 'AIzaSyAXsYBc0wIEWdvjQrEcGZxq4e8dFHxJbys',
+          geminiApiKey: ApiConfig.geminiApiKey,
         ),
       ],
     );
