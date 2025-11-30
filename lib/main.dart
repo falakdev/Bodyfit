@@ -10,11 +10,16 @@ import 'core/theme/app_colors.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/main_navigation.dart';
+import 'services/step_counter_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
+  // Initialize step counter service
+  final stepService = StepCounterService();
+  await stepService.initialize();
+
   // Initialize Firebase with options
   try {
     await Firebase.initializeApp(
@@ -25,7 +30,7 @@ void main() async {
     debugPrint('Firebase initialization error: $e');
     // App will continue to work but Firebase features won't be available
   }
-  
+
   final prefs = await SharedPreferences.getInstance();
   final seenOnboarding = prefs.getBool("onboarding_done") ?? false;
 

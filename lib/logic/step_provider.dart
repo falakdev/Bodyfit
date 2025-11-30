@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../core/models/user_profile.dart';
 import '../services/firebase_service.dart';
+import '../services/step_counter_service.dart';
 
 class StepProvider extends ChangeNotifier {
   int steps = 0;
@@ -11,12 +12,19 @@ class StepProvider extends ChangeNotifier {
   double calories = 0.0;
   UserProfile? userProfile;
   final FirebaseService _firebaseService = FirebaseService();
-  
+  final StepCounterService _stepCounterService = StepCounterService();
+
   // Weekly stats
   List<int> weeklySteps = [0, 0, 0, 0, 0, 0, 0];
-  List<double> weeklyCalories = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
-  
-  // Workout tracking
+  List<double> weeklyCalories = [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ]; // Workout tracking
   int workoutsCompletedThisWeek = 0;
   double totalWorkoutMinutes = 0.0;
 
@@ -35,7 +43,7 @@ class StepProvider extends ChangeNotifier {
         notifyListeners();
       }
     });
-    
+
     // Also try to load profile immediately if user is already authenticated
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null && currentUser.email != null) {
@@ -52,6 +60,14 @@ class StepProvider extends ChangeNotifier {
     try {
       _stepCountStream = Pedometer.stepCountStream;
       _stepCountStream!.listen(_onStepData).onError(_onStepError);
+
+      // Also listen to the step counter service for automatic updates
+      _stepCounterService.getStepStream().listen((steps) {
+        this.steps = steps;
+        _calculateCalories();
+        _saveData();
+        notifyListeners();
+      });
     } catch (e) {
       if (kDebugMode) print('Pedometer initialization failed: $e');
     }
@@ -81,11 +97,13 @@ class StepProvider extends ChangeNotifier {
   }
 
   double get progress => (steps / dailyGoal).clamp(0, 1);
-  
+
   double get averageWeeklySteps {
-    return weeklySteps.isEmpty ? 0 : weeklySteps.reduce((a, b) => a + b) / weeklySteps.length;
+    return weeklySteps.isEmpty
+        ? 0
+        : weeklySteps.reduce((a, b) => a + b) / weeklySteps.length;
   }
-  
+
   double get totalWeeklyCalories {
     return weeklyCalories.isEmpty ? 0 : weeklyCalories.reduce((a, b) => a + b);
   }
@@ -94,7 +112,7 @@ class StepProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt("steps", steps);
     prefs.setDouble("calories", calories);
-    
+
     // Also save to Firebase if user is authenticated
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -111,7 +129,7 @@ class StepProvider extends ChangeNotifier {
     dailyGoal = prefs.getInt("dailyGoal") ?? 6000;
     steps = prefs.getInt("steps") ?? 0;
     calories = prefs.getDouble("calories") ?? 0.0;
-    
+
     // Try to load from Firebase first if user is authenticated
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -120,7 +138,7 @@ class StepProvider extends ChangeNotifier {
       // Fallback to SharedPreferences
       _loadProfileFromPrefs(prefs);
     }
-    
+
     notifyListeners();
   }
 
@@ -137,7 +155,7 @@ class StepProvider extends ChangeNotifier {
       if (kDebugMode) print("Error loading profile from Firebase: $e");
     }
   }
-  
+
   // Public method to reload profile from Firebase
   Future<void> loadProfileFromFirebase() async {
     await _loadProfileFromFirebase();
@@ -155,7 +173,7 @@ class StepProvider extends ChangeNotifier {
         final weight = prefs.getDouble("weight") ?? 70.0;
         final height = prefs.getDouble("height") ?? 170.0;
         final stepGoal = prefs.getInt("stepGoal") ?? 6000;
-        
+
         if (name.isNotEmpty) {
           userProfile = UserProfile(
             name: name,
@@ -173,11 +191,11 @@ class StepProvider extends ChangeNotifier {
       }
     }
   }
-  
+
   Future<void> saveUserProfile(UserProfile profile) async {
     userProfile = profile;
     dailyGoal = profile.dailyStepGoal;
-    
+
     // Save to Firebase if user is authenticated
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -187,7 +205,7 @@ class StepProvider extends ChangeNotifier {
         if (kDebugMode) print("Error saving profile to Firebase: $e");
       }
     }
-    
+
     // Also save to SharedPreferences for backward compatibility
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString("name", profile.name);
@@ -196,14 +214,14 @@ class StepProvider extends ChangeNotifier {
     await prefs.setDouble("weight", profile.weight);
     await prefs.setDouble("height", profile.height);
     await prefs.setInt("stepGoal", profile.dailyStepGoal);
-    
+
     _calculateCalories();
     notifyListeners();
   }
 
   Future<void> updateDailyGoal(int newGoal) async {
     dailyGoal = newGoal;
-    
+
     // Update in Firebase if user is authenticated
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -213,11 +231,11 @@ class StepProvider extends ChangeNotifier {
         if (kDebugMode) print("Error updating goal in Firebase: $e");
       }
     }
-    
+
     // Also update in SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt("dailyGoal", dailyGoal);
-    
+
     // Update in user profile if exists
     if (userProfile != null) {
       userProfile = UserProfile(
@@ -232,10 +250,10 @@ class StepProvider extends ChangeNotifier {
         createdAt: userProfile!.createdAt,
       );
     }
-    
+
     notifyListeners();
   }
-  
+
   void recordWorkout(int minutes, double caloriesBurned) {
     workoutsCompletedThisWeek++;
     totalWorkoutMinutes += minutes;
