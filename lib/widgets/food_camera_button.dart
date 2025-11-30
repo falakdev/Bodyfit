@@ -18,8 +18,12 @@ class _FoodCameraButtonState extends State<FoodCameraButton> {
 
   Future<void> _pickImage(ImageSource source) async {
     try {
-      final XFile? file =
-          await _picker.pickImage(source: source, imageQuality: 80);
+      final XFile? file = await _picker.pickImage(
+        source: source,
+        imageQuality: 50, // Reduced from 80 to compress images
+        maxHeight: 1024, // Limit max dimensions
+        maxWidth: 1024,
+      );
       if (file == null) {
         _showError('No image selected');
         return;
@@ -81,9 +85,22 @@ class _FoodCameraButtonState extends State<FoodCameraButton> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Display image with memory optimization
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.file(imageFile, height: 150, fit: BoxFit.cover),
+                  child: Container(
+                    constraints: const BoxConstraints(
+                      maxHeight: 200,
+                      maxWidth: 300,
+                    ),
+                    child: Image.file(
+                      imageFile,
+                      fit: BoxFit.cover,
+                      cacheHeight: 250,
+                      cacheWidth: 350,
+                      gaplessPlayback: true,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
