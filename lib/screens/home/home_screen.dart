@@ -3,6 +3,10 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../widgets/progress_circle.dart';
+import '../../widgets/water_tracker_widget.dart';
+import '../../widgets/workout_timer_widget.dart';
+import '../../widgets/calorie_counter_widget.dart';
+import '../../widgets/all_features_widget.dart';
 import '../../logic/step_provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -63,6 +67,25 @@ class HomeScreen extends StatelessWidget {
 
                 // Quick Action Buttons
                 _buildQuickActions(context),
+                const SizedBox(height: 24),
+
+                // Water Tracker
+                const WaterTrackerWidget(),
+                const SizedBox(height: 20),
+
+                // Workout Timer
+                const WorkoutTimerWidget(),
+                const SizedBox(height: 20),
+
+                // Calorie Counter
+                const CalorieCounterWidget(),
+                const SizedBox(height: 20),
+
+                // All Features (Achievements, Quotes, BMI)
+                SizedBox(
+                  height: 400,
+                  child: const AllFeaturesWidget(),
+                ),
               ],
             ),
           ),
