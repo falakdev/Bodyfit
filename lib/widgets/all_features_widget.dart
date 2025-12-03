@@ -89,51 +89,56 @@ class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
   // Achievements removed per request
 
   Widget _buildQuotesView() {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Daily Motivation',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 40),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.purple),
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 4,
+        margin: const EdgeInsets.all(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Daily Motivation',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              child: _isLoadingQuote
-                  ? const CircularProgressIndicator()
-                  : Text(
-                      _currentQuote.isNotEmpty
-                          ? _currentQuote
-                          : quotesService.getQuoteOfTheDay(),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontStyle: FontStyle.italic,
-                        height: 1.6,
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.purple),
+                ),
+                child: _isLoadingQuote
+                    ? const SizedBox(
+                        height: 60,
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : Text(
+                        _currentQuote.isNotEmpty
+                            ? _currentQuote
+                            : quotesService.getQuoteOfTheDay(),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontStyle: FontStyle.italic,
+                          height: 1.5,
+                        ),
                       ),
-                    ),
-            ),
-            const SizedBox(height: 40),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-                foregroundColor: Colors.white,
               ),
-              onPressed: _isLoadingQuote ? null : _fetchNewQuote,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Get New Quote'),
-            ),
-          ],
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: _isLoadingQuote ? null : _fetchNewQuote,
+                icon: const Icon(Icons.refresh, size: 18),
+                label: const Text('Get New Quote'),
+              ),
+            ],
+          ),
         ),
       ),
     );
