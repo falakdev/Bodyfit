@@ -44,6 +44,14 @@ class WaterTrackerService {
     }
   }
 
+  Future<void> resetDay() async {
+    _glassesToday = 0;
+    final prefs = await SharedPreferences.getInstance();
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    await prefs.setString('water_date', today);
+    await prefs.setInt('glasses_today', 0);
+  }
+
   int getGlassesToday() => _glassesToday;
   double getProgress() => (_glassesToday / dailyGoal).clamp(0.0, 1.0);
   int getRemainingGlasses() => (dailyGoal - _glassesToday).clamp(0, dailyGoal);
