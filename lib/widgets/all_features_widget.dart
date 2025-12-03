@@ -36,30 +36,24 @@ class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return Column(
-          children: [
-            // Tab Selector
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildTabButton('💬 Quotes', 0),
-                  _buildTabButton('⚖️ BMI', 1),
-                ],
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              // Tab Selector
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildTabButton('💬 Quotes', 0),
+                    _buildTabButton('⚖️ BMI', 1),
+                  ],
+                ),
               ),
-            ),
-            // Content
-            Expanded(
-              child: PageView(
-                onPageChanged: (index) => setState(() => _selectedTab = index),
-                children: [
-                  _buildQuotesView(),
-                  _buildBMIView(),
-                ],
-              ),
-            ),
-          ],
+              // Content based on selected tab
+              if (_selectedTab == 0) _buildQuotesView() else _buildBMIView(),
+            ],
+          ),
         );
       },
     );
@@ -89,56 +83,57 @@ class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
   // Achievements removed per request
 
   Widget _buildQuotesView() {
-    return SingleChildScrollView(
-      child: Card(
-        elevation: 4,
-        margin: const EdgeInsets.all(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Daily Motivation',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.all(12),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Daily Motivation',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.purple.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.purple, width: 1),
               ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.purple.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.purple),
-                ),
-                child: _isLoadingQuote
-                    ? const SizedBox(
-                        height: 60,
-                        child: Center(child: CircularProgressIndicator()),
-                      )
-                    : Text(
-                        _currentQuote.isNotEmpty
-                            ? _currentQuote
-                            : quotesService.getQuoteOfTheDay(),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontStyle: FontStyle.italic,
-                          height: 1.5,
-                        ),
+              child: _isLoadingQuote
+                  ? const SizedBox(
+                      height: 50,
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : Text(
+                      _currentQuote.isNotEmpty
+                          ? _currentQuote
+                          : quotesService.getQuoteOfTheDay(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontStyle: FontStyle.italic,
+                        height: 1.4,
                       ),
+                    ),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: _isLoadingQuote ? null : _fetchNewQuote,
-                icon: const Icon(Icons.refresh, size: 18),
-                label: const Text('Get New Quote'),
-              ),
-            ],
-          ),
+              onPressed: _isLoadingQuote ? null : _fetchNewQuote,
+              icon: const Icon(Icons.refresh, size: 16),
+              label:
+                  const Text('Get New Quote', style: TextStyle(fontSize: 12)),
+            ),
+          ],
         ),
       ),
     );
