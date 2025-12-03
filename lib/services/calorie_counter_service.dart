@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Food {
@@ -26,6 +27,9 @@ class CalorieCounterService {
   }
 
   CalorieCounterService._internal();
+
+  // Notifier to inform UI when foods change
+  final ValueNotifier<int> notifier = ValueNotifier<int>(0);
 
   List<Food> _foodsToday = [];
   final int dailyGoal = 2000;
@@ -110,12 +114,14 @@ class CalorieCounterService {
   void addFood(Food food) {
     _foodsToday.add(food);
     _saveFoods();
+    notifier.value++;
   }
 
   void removeFood(int index) {
     if (index >= 0 && index < _foodsToday.length) {
       _foodsToday.removeAt(index);
       _saveFoods();
+      notifier.value++;
     }
   }
 
@@ -139,6 +145,7 @@ class CalorieCounterService {
       );
 
       addFood(food);
+      // addFood will already update notifier
     } catch (_) {
       // ignore parsing errors for now
     }

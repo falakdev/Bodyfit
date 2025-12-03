@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../services/achievements_service.dart';
 import '../services/motivation_quotes_service.dart';
 import '../services/bmi_calculator_service.dart';
 
@@ -11,7 +10,6 @@ class AllFeaturesWidget extends StatefulWidget {
 }
 
 class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
-  final achievementsService = AchievementsService();
   final quotesService = MotivationQuotesService();
   final bmiService = BMICalculatorService();
 
@@ -19,11 +17,14 @@ class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
   int _selectedTab = 0;
   double _bmiWeight = 70.0;
   double _bmiHeight = 170.0;
+  String _currentQuote = '';
+  bool _isLoadingQuote = false;
 
   @override
   void initState() {
     super.initState();
-    _initFuture = achievementsService.initialize();
+    _currentQuote = quotesService.getQuoteOfTheDay();
+    _initFuture = Future.value();
   }
 
   @override
@@ -43,9 +44,8 @@ class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildTabButton('🏆 Achievements', 0),
-                  _buildTabButton('💬 Quotes', 1),
-                  _buildTabButton('⚖️ BMI', 2),
+                  _buildTabButton('💬 Quotes', 0),
+                  _buildTabButton('⚖️ BMI', 1),
                 ],
               ),
             ),
@@ -54,7 +54,6 @@ class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
               child: PageView(
                 onPageChanged: (index) => setState(() => _selectedTab = index),
                 children: [
-                  _buildAchievementsView(),
                   _buildQuotesView(),
                   _buildBMIView(),
                 ],
@@ -87,93 +86,7 @@ class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
     );
   }
 
-  Widget _buildAchievementsView() {
-    final achievements = achievementsService.getAchievements();
-    final unlockedCount = achievementsService.getUnlockedCount();
-
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Achievements',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  '$unlockedCount / ${achievements.length}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                ),
-                itemCount: achievements.length,
-                itemBuilder: (context, index) {
-                  final achievement = achievements[index];
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: achievement.isUnlocked
-                          ? Colors.blue.withOpacity(0.1)
-                          : Colors.grey.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color:
-                            achievement.isUnlocked ? Colors.blue : Colors.grey,
-                      ),
-                    ),
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(achievement.icon,
-                            style: const TextStyle(fontSize: 32)),
-                        const SizedBox(height: 8),
-                        Text(
-                          achievement.title,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          achievement.description,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 10),
-                        ),
-                        const SizedBox(height: 8),
-                        if (achievement.isUnlocked)
-                          const Icon(Icons.check_circle,
-                              color: Colors.blue, size: 20),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Achievements removed per request
 
   Widget _buildQuotesView() {
     return Card(
@@ -196,15 +109,19 @@ class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.purple),
               ),
-              child: Text(
-                quotesService.getQuoteOfTheDay(),
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontStyle: FontStyle.italic,
-                  height: 1.6,
-                ),
-              ),
+              child: _isLoadingQuote
+                  ? const CircularProgressIndicator()
+                  : Text(
+                      _currentQuote.isNotEmpty
+                          ? _currentQuote
+                          : quotesService.getQuoteOfTheDay(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontStyle: FontStyle.italic,
+                        height: 1.6,
+                      ),
+                    ),
             ),
             const SizedBox(height: 40),
             ElevatedButton.icon(
@@ -212,7 +129,7 @@ class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
                 backgroundColor: Colors.purple,
                 foregroundColor: Colors.white,
               ),
-              onPressed: () => setState(() {}),
+              onPressed: _isLoadingQuote ? null : _fetchNewQuote,
               icon: const Icon(Icons.refresh),
               label: const Text('Get New Quote'),
             ),
@@ -220,6 +137,24 @@ class _AllFeaturesWidgetState extends State<AllFeaturesWidget> {
         ),
       ),
     );
+  }
+
+  Future<void> _fetchNewQuote() async {
+    setState(() => _isLoadingQuote = true);
+    try {
+      final newQuote = await quotesService.getGeminiMotivationQuote();
+      if (mounted) {
+        setState(() {
+          _currentQuote = newQuote;
+          _isLoadingQuote = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoadingQuote = false);
+      }
+      // Silently fallback to random quote on error
+    }
   }
 
   Widget _buildBMIView() {

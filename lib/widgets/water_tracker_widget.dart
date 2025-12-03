@@ -101,10 +101,10 @@ class _WaterTrackerWidgetState extends State<WaterTrackerWidget>
                       AnimatedBuilder(
                         animation: _animController,
                         builder: (context, child) {
-                          final animValue = Curves.easeOut
-                              .transform(_animController.value);
-              final displayProgress = (progress * animValue)
-                .clamp(0.0, 1.0);
+                          final animValue =
+                              Curves.easeOut.transform(_animController.value);
+                          final displayProgress =
+                              (progress * animValue).clamp(0.0, 1.0);
                           return CustomPaint(
                             size: const Size(180, 180),
                             painter: _CirclePainter(displayProgress),
@@ -131,12 +131,17 @@ class _WaterTrackerWidgetState extends State<WaterTrackerWidget>
                       // glasses icons around
                       Positioned.fill(
                         child: LayoutBuilder(builder: (context, box) {
-                          final radius = math.min(box.maxWidth, box.maxHeight) / 2 - 20;
+                          final radius =
+                              math.min(box.maxWidth, box.maxHeight) / 2 - 20;
                           return Stack(
                             children: List.generate(8, (i) {
                               final angle = (i / 8) * 2 * math.pi - math.pi / 2;
-                              final x = box.maxWidth / 2 + radius * math.cos(angle) - 16;
-                              final y = box.maxHeight / 2 + radius * math.sin(angle) - 16;
+                              final x = box.maxWidth / 2 +
+                                  radius * math.cos(angle) -
+                                  16;
+                              final y = box.maxHeight / 2 +
+                                  radius * math.sin(angle) -
+                                  16;
                               final isFilled = i < glasses;
                               return Positioned(
                                 left: x,
@@ -144,9 +149,11 @@ class _WaterTrackerWidgetState extends State<WaterTrackerWidget>
                                 child: GestureDetector(
                                   onTap: () {
                                     if (isFilled) {
-                                      _updateAndAnimate(() => waterService.removeGlass());
+                                      _updateAndAnimate(
+                                          () => waterService.removeGlass());
                                     } else {
-                                      _updateAndAnimate(() => waterService.addGlass());
+                                      _updateAndAnimate(
+                                          () => waterService.addGlass());
                                     }
                                   },
                                   child: _GlassDot(isFilled: isFilled),
@@ -161,7 +168,9 @@ class _WaterTrackerWidgetState extends State<WaterTrackerWidget>
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  remaining == 0 ? '🎉 Goal Reached!' : '$remaining glasses left',
+                  remaining == 0
+                      ? '🎉 Goal Reached!'
+                      : '$remaining glasses left',
                   style: TextStyle(
                       color: remaining == 0 ? Colors.green : Colors.grey[600],
                       fontWeight: FontWeight.w600),
@@ -171,7 +180,8 @@ class _WaterTrackerWidgetState extends State<WaterTrackerWidget>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton.icon(
-                      onPressed: () => _updateAndAnimate(() => waterService.addGlass()),
+                      onPressed: () =>
+                          _updateAndAnimate(() => waterService.addGlass()),
                       icon: const Icon(Icons.add),
                       label: const Text('Add'),
                       style: ElevatedButton.styleFrom(
@@ -180,7 +190,8 @@ class _WaterTrackerWidgetState extends State<WaterTrackerWidget>
                     ),
                     const SizedBox(width: 12),
                     OutlinedButton.icon(
-                      onPressed: () => _updateAndAnimate(() => waterService.removeGlass()),
+                      onPressed: () =>
+                          _updateAndAnimate(() => waterService.removeGlass()),
                       icon: const Icon(Icons.remove),
                       label: const Text('Remove'),
                     ),
@@ -209,7 +220,10 @@ class _GlassDot extends StatelessWidget {
         border: Border.all(color: Colors.blueAccent, width: 2),
         borderRadius: BorderRadius.circular(8),
         boxShadow: isFilled
-            ? [BoxShadow(color: Colors.blueAccent.withOpacity(0.2), blurRadius: 6)]
+            ? [
+                BoxShadow(
+                    color: Colors.blueAccent.withOpacity(0.2), blurRadius: 6)
+              ]
             : [BoxShadow(color: Colors.black12, blurRadius: 2)],
       ),
       child: Icon(

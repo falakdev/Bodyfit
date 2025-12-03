@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import '../config/api_config.dart';
 
 class MotivationQuotesService {
   static final MotivationQuotesService _instance =
@@ -35,5 +37,30 @@ class MotivationQuotesService {
   String getQuoteOfTheDay() {
     final today = DateTime.now().day;
     return quotes[today % quotes.length];
+  }
+
+  /// Fetch a fresh fitness motivation quote from Gemini API
+  Future<String> getGeminiMotivationQuote() async {
+    try {
+      final model = GenerativeModel(
+        model: 'gemini-2.0-flash',
+        apiKey: ApiConfig.geminiApiKey,
+      );
+
+      final content = [
+        Content.text(
+          'Generate a short, inspiring fitness and health motivation quote (1-2 sentences). '
+          'Make it motivating, energetic, and relevant to fitness/wellness. '
+          'Do not include quotes marks or attribution. Just the quote text.',
+        )
+      ];
+
+      final response = await model.generateContent(content);
+      final text = response.text?.trim() ?? getRandomQuote();
+      return text.isNotEmpty ? text : getRandomQuote();
+    } catch (e) {
+      // Fallback to local quote if API fails
+      return getRandomQuote();
+    }
   }
 }

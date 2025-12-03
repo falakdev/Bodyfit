@@ -43,8 +43,9 @@ class _CalorieCounterWidgetState extends State<CalorieCounterWidget> {
                 end: Alignment.bottomRight,
               ),
             ),
-            child: StatefulBuilder(
-              builder: (context, setState) {
+            child: ValueListenableBuilder<int>(
+              valueListenable: calorieService.notifier,
+              builder: (context, _, __) {
                 final totalCals = calorieService.getTotalCalories();
                 final progress = calorieService.getProgress();
                 final foods = calorieService.getFoodsToday();
@@ -152,7 +153,6 @@ class _CalorieCounterWidgetState extends State<CalorieCounterWidget> {
                                       color: Colors.red, size: 20),
                                   onPressed: () {
                                     calorieService.removeFood(index);
-                                    setState(() {});
                                   },
                                 ),
                               ],

@@ -3,9 +3,6 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../widgets/progress_circle.dart';
-import '../../widgets/water_tracker_widget.dart';
-import '../../widgets/workout_timer_widget.dart';
-import '../../widgets/calorie_counter_widget.dart';
 import '../../widgets/all_features_widget.dart';
 import '../../logic/step_provider.dart';
 
@@ -32,60 +29,51 @@ class HomeScreen extends StatelessWidget {
               children: [
                 // Welcome Section
                 _buildWelcomeSection(stepProvider),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
-                // Daily Steps Progress
-                _buildStepsCard(stepProvider),
-                const SizedBox(height: 20),
+                // Big Steps Card
+                _buildBigStepsCard(stepProvider),
+                const SizedBox(height: 16),
 
-                // Calories & Stats Row
+                // Two stat cards side by side
                 Row(
                   children: [
                     Expanded(
-                        child: _buildStatCard(
-                      title: 'Calories',
-                      value: stepProvider.calories.toStringAsFixed(0),
-                      unit: 'kcal',
-                      icon: Icons.local_fire_department,
-                      color: Color(0xFFFF6B6B),
-                    )),
+                      child: _buildSmallInfoCard(
+                        title: 'Avg Steps',
+                        value:
+                            stepProvider.averageWeeklySteps.toStringAsFixed(0),
+                        icon: Icons.directions_walk,
+                        color: AppColors.primary,
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
-                        child: _buildStatCard(
-                      title: 'Avg Steps',
-                      value: stepProvider.averageWeeklySteps.toStringAsFixed(0),
-                      unit: 'steps',
-                      icon: Icons.directions_walk,
-                      color: AppColors.primary,
-                    )),
+                      child: _buildSmallInfoCard(
+                        title: 'Distance',
+                        value:
+                            '${(stepProvider.steps * 0.00075).toStringAsFixed(2)} km',
+                        icon: Icons.map,
+                        color: AppColors.accent,
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
-                // User Profile Section
+                // Profile Section (if user logged in)
                 if (stepProvider.userProfile != null)
                   _buildProfileSection(stepProvider),
-                const SizedBox(height: 20),
+                if (stepProvider.userProfile != null)
+                  const SizedBox(height: 16),
 
-                // Quick Action Buttons
+                // Quick Actions
                 _buildQuickActions(context),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
-                // Water Tracker
-                const WaterTrackerWidget(),
-                const SizedBox(height: 20),
-
-                // Workout Timer
-                const WorkoutTimerWidget(),
-                const SizedBox(height: 20),
-
-                // Calorie Counter
-                const CalorieCounterWidget(),
-                const SizedBox(height: 20),
-
-                // All Features (Achievements, Quotes, BMI)
+                // Features Panel
                 SizedBox(
-                  height: 400,
+                  height: 300,
                   child: const AllFeaturesWidget(),
                 ),
               ],
@@ -127,34 +115,39 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStepsCard(StepProvider provider) {
+  Widget _buildSmallInfoCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primary.withOpacity(0.3), width: 1),
+        color: const Color(0xFF161616),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.18)),
       ),
-      child: Column(
+      child: Row(
         children: [
-          Text('Today\'s Steps', style: AppTextStyles.subheading),
-          const SizedBox(height: 20),
-          Center(
-            child: ProgressCircle(
-              progress: provider.progress,
-              label: "${provider.steps} / ${provider.dailyGoal}",
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.15),
+              shape: BoxShape.circle,
             ),
+            child: Icon(icon, color: color, size: 22),
           ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildStatMini('Distance',
-                  '${(provider.steps * 0.00075).toStringAsFixed(2)} km'),
-              _buildStatMini('Duration',
-                  '${(provider.steps / 60).toStringAsFixed(0)} min'),
-              _buildStatMini(
-                  'Goal', '${((provider.progress) * 100).toStringAsFixed(0)}%'),
+              Text(title,
+                  style: TextStyle(color: Colors.white70, fontSize: 12)),
+              const SizedBox(height: 4),
+              Text(value,
+                  style: TextStyle(color: color, fontWeight: FontWeight.bold)),
             ],
           ),
         ],
@@ -162,44 +155,43 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatMini(String label, String value) {
-    return Column(
-      children: [
-        Text(value,
-            style: TextStyle(
-                color: AppColors.primary,
-                fontSize: 16,
-                fontWeight: FontWeight.bold)),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(color: Colors.white54, fontSize: 12)),
-      ],
-    );
-  }
-
-  Widget _buildStatCard({
-    required String title,
-    required String value,
-    required String unit,
-    required IconData icon,
-    required Color color,
-  }) {
+  Widget _buildBigStepsCard(StepProvider provider) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 12),
-          Text(title, style: TextStyle(color: Colors.white70, fontSize: 12)),
-          const SizedBox(height: 6),
-          Text('$value $unit',
-              style: TextStyle(
-                  color: color, fontSize: 18, fontWeight: FontWeight.bold)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Today', style: TextStyle(color: Colors.white70)),
+                  const SizedBox(height: 6),
+                  Text('${provider.steps}',
+                      style: AppTextStyles.heading
+                          .copyWith(color: Colors.white, fontSize: 36)),
+                  const SizedBox(height: 4),
+                  Text('${provider.dailyGoal} goal',
+                      style: TextStyle(color: Colors.white70)),
+                ],
+              ),
+              SizedBox(
+                width: 120,
+                height: 120,
+                child: ProgressCircle(
+                  progress: provider.progress,
+                  label: "${provider.steps} / ${provider.dailyGoal}",
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
