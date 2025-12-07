@@ -8,6 +8,8 @@ class Exercise {
   final int durationMinutes;
   final String instructions;
   final List<String> targetMuscles;
+  final String imageUrl; // Primary hero image
+  final List<String> galleryImages; // Secondary imagery for pro layouts
 
   const Exercise({
     required this.id,
@@ -19,9 +21,13 @@ class Exercise {
     required this.durationMinutes,
     required this.instructions,
     required this.targetMuscles,
+    required this.imageUrl,
+    this.galleryImages = const [],
   });
 
   factory Exercise.fromMap(Map<String, dynamic> data) {
+    final List<String> gallery = List<String>.from(data['galleryImages'] ?? []);
+    final String primaryImage = data['imageUrl'] ?? '';
     return Exercise(
       id: data['id'] ?? '',
       name: data['name'] ?? '',
@@ -32,6 +38,8 @@ class Exercise {
       durationMinutes: data['durationMinutes'] ?? 20,
       instructions: data['instructions'] ?? '',
       targetMuscles: List<String>.from(data['targetMuscles'] ?? []),
+      imageUrl: primaryImage,
+      galleryImages: gallery.isNotEmpty ? gallery : (primaryImage.isNotEmpty ? [primaryImage] : []),
     );
   }
 
@@ -46,6 +54,8 @@ class Exercise {
       'durationMinutes': durationMinutes,
       'instructions': instructions,
       'targetMuscles': targetMuscles,
+      'imageUrl': imageUrl,
+      'galleryImages': galleryImages,
     };
   }
 }

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../services/calorie_counter_service.dart';
+import '../core/theme/app_colors.dart';
+import 'draggable_fab.dart';
 
 class FoodCameraButton extends StatefulWidget {
   const FoodCameraButton({super.key});
@@ -252,25 +254,33 @@ class _FoodCameraButtonState extends State<FoodCameraButton> {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 20,
-      left: 20,
-      child: FloatingActionButton(
-        heroTag: 'food_camera',
-        onPressed: _isAnalyzing ? null : () => _showPickOptions(),
-        backgroundColor: Colors.deepOrange,
-        disabledElevation: 0,
-        child: _isAnalyzing
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : const Icon(Icons.camera_alt),
-      ),
+    final screenSize = MediaQuery.of(context).size;
+    final bottomNavHeight = 68.0; // Bottom navigation bar height
+    
+    // Position on the left side, above the bottom nav bar to avoid overlap
+    // Position it lower than the chat button to avoid overlap between the two
+    final initialX = 20.0; // Left side with padding
+    final initialY = screenSize.height - bottomNavHeight - 80; // Above bottom nav
+    
+    return DraggableFAB(
+      heroTag: 'food_camera',
+      backgroundColor: AppColors.accent, // Purple accent color
+      initialPosition: Offset(initialX, initialY),
+      onPressed: _isAnalyzing ? null : () => _showPickOptions(),
+      child: _isAnalyzing
+          ? const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            )
+          : const Icon(
+              Icons.camera_alt,
+              color: Colors.white,
+              size: 24,
+            ),
     );
   }
 

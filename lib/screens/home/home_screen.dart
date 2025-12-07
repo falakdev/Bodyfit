@@ -4,7 +4,11 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../widgets/progress_circle.dart';
 import '../../widgets/all_features_widget.dart';
+import '../../widgets/sticker_widget.dart';
+import '../../widgets/weekly_steps_chart_widget.dart';
 import '../../logic/step_provider.dart';
+import '../workouts/workouts_screen.dart';
+import '../stats/stats_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -26,12 +30,69 @@ class HomeScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Welcome Section
                 _buildWelcomeSection(stepProvider),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
-                // Big Steps Card
+                // Average Steps Card Sticker
+                AverageStepsCardSticker(
+                  averageSteps: stepProvider.averageWeeklySteps.toInt(),
+                  calories: stepProvider.calories,
+                  minutes: (stepProvider.totalWorkoutMinutes).toInt(),
+                  imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop',
+                ),
+
+                // Weekly Steps Chart
+                WeeklyStepsChartWidget(
+                  weeklySteps: stepProvider.weeklySteps,
+                  averageSteps: stepProvider.averageWeeklySteps,
+                ),
+                const SizedBox(height: 20),
+
+                // Fitness Cards Section
+                Text(
+                  'Featured Workouts',
+                  style: AppTextStyles.subheading.copyWith(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Cardio Card Sticker
+                FitnessCardSticker(
+                  category: 'FITNESS',
+                  title: 'Cardio',
+                  description: 'Get active on your off days and challenge your friends',
+                  imageUrl: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop',
+                  participantCount: 12,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const WorkoutsScreen()),
+                    );
+                  },
+                ),
+
+                // Health Article Card Sticker
+                HealthArticleCardSticker(
+                  category: 'HEALTH',
+                  title: 'How to Be a Better Runner',
+                  articleCount: 8,
+                  imageUrl: 'https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=400&h=300&fit=crop',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const StatsScreen()),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 20),
+
+                // Today's Steps Card
                 _buildBigStepsCard(stepProvider),
                 const SizedBox(height: 16),
 
@@ -76,6 +137,7 @@ class HomeScreen extends StatelessWidget {
                   height: 300,
                   child: const AllFeaturesWidget(),
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -245,13 +307,19 @@ class HomeScreen extends StatelessWidget {
           children: [
             Expanded(
               child: _buildActionButton('🏃 Start Workout', () {
-                // Navigate to workouts
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const WorkoutsScreen()),
+                );
               }),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _buildActionButton('📊 View Stats', () {
-                // Navigate to stats
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const StatsScreen()),
+                );
               }),
             ),
           ],
