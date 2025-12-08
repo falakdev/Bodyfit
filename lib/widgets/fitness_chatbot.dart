@@ -94,8 +94,10 @@ class _FitnessChatbotState extends State<FitnessChatbot> {
     final isSmall = size.width < 420;
 
     return Stack(
+      clipBehavior: Clip.none,
       children: [
         if (_isExpanded) _buildChatSheet(isSmall, size),
+        // FAB is rendered last so it's always on top and can receive gestures
         _buildFab(),
       ],
     );
@@ -105,33 +107,36 @@ class _FitnessChatbotState extends State<FitnessChatbot> {
     return Positioned(
       bottom: 80,
       right: 16,
-      child: SizedBox(
-        width: isSmall ? size.width - 40 : 360,
-        height: 480,
-        child: Material(
-          color: AppColors.isDarkMode
-              ? const Color(0xFF1E1E1E)
-              : Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          elevation: 18,
-          shadowColor: AppColors.primary.withOpacity(0.3),
-          child: ClipRRect(
+      child: Material(
+        color: Colors.transparent,
+        child: SizedBox(
+          width: isSmall ? size.width - 40 : 360,
+          height: 480,
+          child: Material(
+            color: AppColors.isDarkMode
+                ? const Color(0xFF1E1E1E)
+                : Colors.white,
             borderRadius: BorderRadius.circular(24),
-            child: Column(
-              children: [
-                _buildHeader(),
-                Expanded(child: _buildMessages()),
-                if (_isLoading)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+            elevation: 18,
+            shadowColor: AppColors.primary.withOpacity(0.3),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: Column(
+                children: [
+                  _buildHeader(),
+                  Expanded(child: _buildMessages()),
+                  if (_isLoading)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
                     ),
-                  ),
-                _buildInput(),
-              ],
+                  _buildInput(),
+                ],
+              ),
             ),
           ),
         ),
@@ -282,13 +287,14 @@ class _FitnessChatbotState extends State<FitnessChatbot> {
   Widget _buildFab() {
     final screenSize = MediaQuery.of(context).size;
     final bottomNavHeight = 68.0; // Bottom navigation bar height
-    final padding = 16.0;
     
     // Position on the right side, above the bottom nav bar to avoid overlap
-    // Position it slightly higher than the camera button to avoid overlap between the two
-    final initialX = screenSize.width - 80; // Right side with padding
-    final initialY = screenSize.height - bottomNavHeight - 160; // Above bottom nav, higher than camera
+    // Position it higher than the camera button and away from bottom nav/profile
+    final initialX = screenSize.width - 110; // More padding from profile icon
+    final initialY =
+        screenSize.height - bottomNavHeight - 220; // Higher to avoid overlap
     
+    // Ensure FAB is always draggable by wrapping in a widget that preserves gestures
     return DraggableFAB(
       heroTag: 'fitness_chatbot',
       backgroundColor: AppColors.primary,

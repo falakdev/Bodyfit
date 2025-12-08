@@ -47,6 +47,7 @@ class _DraggableFABState extends State<DraggableFAB> {
   void _onPanUpdate(DragUpdateDetails details) {
     final screenSize = MediaQuery.of(context).size;
     const fabSize = 56.0; // Standard FAB size
+    const edgePadding = 16.0;
 
     setState(() {
       _position += details.delta;
@@ -54,11 +55,13 @@ class _DraggableFABState extends State<DraggableFAB> {
       // Constrain to screen bounds, accounting for bottom navigation bar
       final bottomNavHeight = 68.0;
       final safeAreaBottom = MediaQuery.of(context).padding.bottom;
-      final minY = 0.0;
-      final maxY = screenSize.height - fabSize - bottomNavHeight - safeAreaBottom - 16;
-      
+      final minY = edgePadding;
+      final maxY =
+          screenSize.height - fabSize - bottomNavHeight - safeAreaBottom - 20;
+
       _position = Offset(
-        _position.dx.clamp(0.0, screenSize.width - fabSize),
+        _position.dx
+            .clamp(edgePadding, screenSize.width - fabSize - edgePadding),
         _position.dy.clamp(minY, maxY),
       );
     });
@@ -81,8 +84,8 @@ class _DraggableFABState extends State<DraggableFAB> {
         y = screenSize.height - bottomNavHeight - safeAreaBottom - 80;
       } else if (widget.heroTag == 'fitness_chatbot') {
         // Position on the right side, above bottom nav, higher than camera
-        x = screenSize.width - 80;
-        y = screenSize.height - bottomNavHeight - safeAreaBottom - 160;
+        x = screenSize.width - 110; // pull away from profile icon
+        y = screenSize.height - bottomNavHeight - safeAreaBottom - 220;
       } else {
         x = screenSize.width - 80;
         y = screenSize.height - bottomNavHeight - safeAreaBottom - 200;
@@ -94,6 +97,7 @@ class _DraggableFABState extends State<DraggableFAB> {
       left: _position.dx,
       top: _position.dy,
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onPanStart: _onPanStart,
         onPanUpdate: _onPanUpdate,
         onPanEnd: _onPanEnd,
